@@ -134,12 +134,23 @@ R = (function (document, undefined) {
         }
 
         if (!baseOrModule[tmp]) {
-            (baseOrModule.f || globalEval("(function(require,"+tmp+",module){" + baseOrModule.t + "\n})//# sourceURL=" + baseOrModule.l))(
-                function require (id) {
-                    return resolveModuleOrGetExports(resolveModuleOrGetExports(baseOrModule.l, id));
-                }, // require
-                baseOrModule[tmp] = {}, // exports
-                baseOrModule // module
+            baseOrModule[tmp] = {};
+            (
+                baseOrModule.f 
+                || globalEval("(function(require, " + tmp + ", module, __filename, __dirname) {" 
+                    + baseOrModule.t 
+                    + "\n})//# sourceURL=" + baseOrModule.l)
+            ).apply(
+                baseOrModule[tmp], 
+                [
+                    function require (id) {
+                        return resolveModuleOrGetExports(resolveModuleOrGetExports(baseOrModule.l, id));
+                    }, // require
+                    baseOrModule[tmp], // exports
+                    baseOrModule, // module
+                    baseOrModule.l, // __filename
+                    baseOrModule.l.slice(0, baseOrModule.l.lastIndexOf("/")) // __dirname
+                ]
             );
         }
 
